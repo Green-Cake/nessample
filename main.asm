@@ -1,9 +1,9 @@
 
-	; INESヘッダー
-	.inesprg 1 ;   - プログラムにいくつのバンクを使うか。今は１つ。
-	.ineschr 1 ;   - グラフィックデータにいくつのバンクを使うか。今は１つ。
-	.inesmir 0 ;   - 水平ミラーリング
-	.inesmap 0 ;   - マッパー。0番にする。
+	; INES header
+	.inesprg 1
+	.ineschr 1
+	.inesmir 0
+	.inesmap 0
 
 calc0 = $00
 calc1 = $01
@@ -93,30 +93,28 @@ Start:
 	sta $2000
 
 waitVSync:
-	lda $2002  ; VBlankが発生すると、$2002の7ビット目が1になる
-	bpl waitVSync  ; bit7が0の間は、Startラベルの位置に飛んでループして待つ
+	lda $2002
+	bpl waitVSync
 
-	lda #%00000110		; 初期化中はスプライトとBGを表示OFFにする
+	lda #%00000110
 	sta $2001
 
-	ldx #$00    ; Xレジスタクリア
+	ldx #$00 
 
-	; VRAMアドレスレジスタの$2006に、パレットのロード先のアドレス$3F00を指定する。
 	lda #$3F    ; have $2006 tell
 	sta $2006   ; $2007 to start
 	lda #$00    ; at $3F00 (pallete).
 	sta $2006
 
-loadPal:			; ラベルは、「ラベル名＋:」の形式で記述
-	lda tilepal, x ; Aに(ourpal + x)番地のパレットをロードする
+loadPal:
+	lda tilepal, x
 
-	sta $2007 ; $2007にパレットの値を読み込む
+	sta $2007
 
-	inx ; Xレジスタに値を1加算している
+	inx
 
-	cpx #32 ; Xを32(10進数。BGとスプライトのパレットの総数)と比較して同じかどうか比較している
-	bne loadPal ;	上が等しくない場合は、loadpalラベルの位置にジャンプする
-	; Xが32ならパレットロード終了
+	cpx #32
+	bne loadPal
 
 	jsr loadAttrib_title
 	jsr loadBG_common
@@ -199,7 +197,7 @@ mainLoop:
 	and #%10000000
 	beq .reload_end
 
-	lda #%00000110		; 初期化中はスプライトとBGを表示OFFにする
+	lda #%00000110		; スプライトとBG 表示OFF
 	sta $2001
 
 	lda <scene
